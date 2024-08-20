@@ -1,0 +1,106 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+
+public class MatchRelativeTransforms : MonoBehaviour
+{
+    public Transform previousDetail;
+    public Transform testParent; 
+
+    public float snapDistance = 0.1f;
+    private bool isSnapped = false;
+    private Rigidbody currentDetailRigidbody;
+    [SerializeField] private List<Collider> currentDetailColliders;
+
+    private Transform currentDetail;
+    private Transform assembledParent;
+    private GearboxAssembly gearboxAssembly;
+
+    public GearboxAssembly GearboxAssembly
+    {
+        get { return gearboxAssembly; }
+        set { gearboxAssembly = value; }
+    }
+
+    void Start()
+    {
+        currentDetail = this.transform;
+        assembledParent = GameObject.Find("Assembled").transform; 
+        currentDetailRigidbody = currentDetail.GetComponent<Rigidbody>();
+        currentDetailColliders = new List<Collider>(GetComponents<Collider>());
+
+        gearboxAssembly = FindObjectOfType<GearboxAssembly>();
+        if (gearboxAssembly == null)
+        {
+            Debug.LogError("GearboxAssembly не найден в сцене. Убедитесь, что он присутствует и активен.");
+        }
+
+
+    }
+
+    void FixedUpdate()
+    {
+        GameObject assembledObject = GameObject.Find("Assembled");
+        if (assembledObject != null)
+        {
+            assembledParent = assembledObject.transform;
+        }
+        else
+        {
+            Debug.LogError("Assembled объект не найден в сцене. Убедитесь, что он присутствует и активен.");
+            return; // Останавливаем выполнение Start, если assembledParent не найден
+        }
+        if (!isSnapped && currentDetail != null && previousDetail != null)
+        {
+            Transform assembledPreviousDetail = assembledParent.Find(previousDetail.name);
+            Transform assembledCurrentDetail = assembledParent.Find(currentDetail.name);
+
+            if (assembledPreviousDetail == null)
+            {
+                Debug.LogError("Assembled detail with name " + previousDetail.name + " not found in assembled.");
+                return;
+            }
+
+            if (assembledCurrentDetail == null)
+            {
+                Debug.LogError("Assembled detail with name " + currentDetail.name + " not found in assembled.");
+                return;
+            }
+
+            float distance = Vector3.Distance(previousDetail.position, currentDetail.position);
+
+            if (distance < snapDistance)
+            {
+                Vector3 positionOffset = assembledCurrentDetail.position - assembledPreviousDetail.position;
+                Quaternion rotationOffset = assembledCurrentDetail.rotation * Quaternion.Inverse(assembledPreviousDetail.rotation);
+
+                currentDetail.position = previousDetail.position + positionOffset;
+                currentDetail.rotation = rotationOffset * previousDetail.rotation;
+                currentDetail.GetComponent<XRGrabInteractable>().enabled = false;
+
+                if (currentDetailRigidbody != null)
+                {
+                    currentDetailRigidbody.useGravity = false;
+                    currentDetailRigidbody.isKinematic = true;
+                }
+
+                isSnapped = true;
+                currentDetail.parent = testParent;
+
+                DisableAllColliders();
+
+                gearboxAssembly.OnDetailSnapped();
+            }
+        }
+    }
+
+    private void DisableAllColliders()
+    {
+        for (int i = 0; i < currentDetailColliders.Count; i++)
+        {
+            currentDetailColliders[i].enabled = false;
+        }
+    }
+}
