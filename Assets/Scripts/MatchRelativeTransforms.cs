@@ -50,7 +50,7 @@ public class MatchRelativeTransforms : MonoBehaviour
         else
         {
             Debug.LogError("Assembled объект не найден в сцене. Убедитесь, что он присутствует и активен.");
-            return; // Останавливаем выполнение Start, если assembledParent не найден
+            return; 
         }
         if (!isSnapped && currentDetail != null && previousDetail != null)
         {

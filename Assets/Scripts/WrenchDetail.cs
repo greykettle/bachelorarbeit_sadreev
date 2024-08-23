@@ -14,7 +14,7 @@ public class WrenchDetail : MonoBehaviour
         // Попробуем найти GearboxAssembly в сцене
         gearboxAssembly = FindObjectOfType<GearboxAssembly>();
 
-        
+
 
         currentDetailMeshCollider = this.GetComponent<MeshCollider>();
     }
@@ -48,4 +48,3 @@ public class WrenchDetail : MonoBehaviour
         }
     }
 }
-

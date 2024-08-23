@@ -17,7 +17,11 @@ public class SnapAndFix : MonoBehaviour
     public Transform snapPoint1B;
     public Transform snapPoint2A;
     public Transform snapPoint2B;
-    public float snapDistance = 0.1f;
+    public float snapDistance = 0.05f;
+
+    public float customEulerRotationX = -90.0f; // Customizable Euler rotation X
+    public float customYPosition = 0.81f; // Customizable Y position
+
     private MeshCollider detailMeshCollider;
     private Rigidbody detailRigidbody;
     private GearboxAssembly gearboxAssembly;
@@ -64,12 +68,14 @@ public class SnapAndFix : MonoBehaviour
 
         this.GetComponent<XRGrabInteractable>().enabled = false;
 
+        // Apply custom Euler rotation X
         Vector3 eulerRotation = currentDetail.transform.rotation.eulerAngles;
-        eulerRotation.x = -90.0f;
+        eulerRotation.x = customEulerRotationX;
         this.transform.rotation = Quaternion.Euler(eulerRotation);
 
+        // Apply custom Y position
         Vector3 newPosition = this.transform.position;
-        newPosition.y = 0.81f;
+        newPosition.y = customYPosition;
         this.transform.position = newPosition;
 
         Rigidbody rb = currentDetail.GetComponent<Rigidbody>();
