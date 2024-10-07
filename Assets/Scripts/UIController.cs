@@ -2,25 +2,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class UIController : MonoBehaviour
 {
     public TMP_Text instructionText; 
-    public List<string> stepInstructions; 
+
+    public List<TextInstruction> stepInstructions;
+    public Localizator localizator;
+
 
     public void UpdateInstructionText(int stepIndex, bool isComplete = false)
     {
         if (isComplete)
         {
-            instructionText.text = "Сборка завершена!";
+            instructionText.text = localizator.currentLanguage == "eng" ? stepInstructions[stepIndex].eng : stepInstructions[stepIndex].ger;// "Сборка завершена!";
         }
         else if (stepIndex < stepInstructions.Count)
         {
-            instructionText.text = stepInstructions[stepIndex];
+            instructionText.text = localizator.currentLanguage == "eng" ? stepInstructions[stepIndex].eng : stepInstructions[stepIndex].ger;
         }
         else
         {
-            instructionText.text = "Неизвестный шаг.";
+            instructionText.text = localizator.currentLanguage == "eng" ? stepInstructions[stepIndex].eng : stepInstructions[stepIndex].ger;// "Неизвестный шаг.";
         }
     }
+}
+
+[Serializable]
+public class TextInstruction
+{ 
+   public string eng,ger;
 }

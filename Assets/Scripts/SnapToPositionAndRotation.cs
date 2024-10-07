@@ -37,7 +37,7 @@ public class SnapToPositionAndRotation : MonoBehaviour
             }
             else
             {
-                Debug.LogError("GearboxAssembly не установлен!");
+                Debug.LogError("GearboxAssembly not installed");
             }
         }
     }
@@ -59,7 +59,7 @@ public class SnapToPositionAndRotation : MonoBehaviour
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.useGravity = false;
+            //rb.useGravity = false;
             rb.isKinematic = true;
         }
 

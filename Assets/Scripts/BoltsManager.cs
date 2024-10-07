@@ -8,10 +8,15 @@ public class BoltsManager : MonoBehaviour
     public Transform previousDetail;
     public List<Transform> bolts;
     public float snapDistance = 0.1f;
+    public bool disableColliderOnSnap = true;
+    public bool enforceOrder = true;
+    public bool useTriggers = true;
     private int boltsSnapped = 0;
     private bool allBoltsSnapped = false;
     private Transform assembledParent;
     private GearboxAssembly gearboxAssembly;
+    public bool enablePreviousDetailGrab = true;
+    public Vector3 localPositiononSnapError;
 
     private Dictionary<Transform, bool> boltSnapStatus = new Dictionary<Transform, bool>();
 
@@ -35,18 +40,36 @@ public class BoltsManager : MonoBehaviour
         foreach (var bolt in bolts)
         {
             boltSnapStatus[bolt] = false;
+            if (useTriggers)
+            {
+                var trigger = bolt.gameObject.AddComponent<BoltTrigger>();
+                trigger.Initialize(this, bolt);
+            }
         }
+
+        // Подсветка первого болта, если enforceOrder включен
+        HighlightCurrentBolt();
     }
 
     void Update()
     {
-        if (allBoltsSnapped) return;
+        if (allBoltsSnapped || useTriggers) return;
 
-        foreach (var bolt in bolts)
+        if (enforceOrder)
         {
-            if (!boltSnapStatus[bolt])
+            if (!boltSnapStatus[bolts[boltsSnapped]])
             {
-                SnapBoltIfNeeded(bolt);
+                SnapBoltIfNeeded(bolts[boltsSnapped]);
+            }
+        }
+        else
+        {
+            foreach (var bolt in bolts)
+            {
+                if (!boltSnapStatus[bolt])
+                {
+                    SnapBoltIfNeeded(bolt);
+                }
             }
         }
 
@@ -55,6 +78,16 @@ public class BoltsManager : MonoBehaviour
             allBoltsSnapped = true;
             gearboxAssembly.OnDetailSnapped();
             Debug.Log("All bolts inserted! Proceeding...");
+
+            if (!enablePreviousDetailGrab)
+            {
+                DisablePreviousDetailGrab();
+            }
+        }
+        else
+        {
+            // Обновляем подсветку текущего болта
+            HighlightCurrentBolt();
         }
     }
 
@@ -79,31 +112,163 @@ public class BoltsManager : MonoBehaviour
 
         if (distance < snapDistance)
         {
-            Vector3 positionOffset = assembledCurrentBolt.position - assembledPreviousDetail.position;
-            Quaternion rotationOffset = assembledCurrentBolt.rotation * Quaternion.Inverse(assembledPreviousDetail.rotation);
+            SnapBolt(bolt);
+        }
+    }
 
-            bolt.position = previousDetail.position + positionOffset;
-            bolt.rotation = rotationOffset * previousDetail.rotation;
+    public void OnBoltTriggered(Transform bolt)
+    {
+        if (allBoltsSnapped) return;
 
-            XRGrabInteractable grabInteractable = bolt.GetComponent<XRGrabInteractable>();
-            if (grabInteractable != null)
+        if (enforceOrder && bolts[boltsSnapped] != bolt)
+        {
+            return;
+        }
+
+        SnapBolt(bolt);
+
+        if (boltsSnapped == bolts.Count)
+        {
+            allBoltsSnapped = true;
+            gearboxAssembly.OnDetailSnapped();
+            Debug.Log("All bolts inserted! Proceeding...");
+
+            if (!enablePreviousDetailGrab)
             {
-                grabInteractable.enabled = false;
+                DisablePreviousDetailGrab();
             }
+        }
+        else
+        {
+            // Обновляем подсветку текущего болта после вставки
+            HighlightCurrentBolt();
+        }
+    }
 
-            Rigidbody rb = bolt.GetComponent<Rigidbody>();
-            if (rb != null)
+    private void SnapBolt(Transform bolt)
+    {
+        Transform assembledPreviousDetail = assembledParent.Find(previousDetail.name);
+        Transform assembledCurrentBolt = assembledParent.Find(bolt.name);
+
+        if (assembledPreviousDetail == null)
+        {
+            Debug.LogError("Assembled detail with name " + previousDetail.name + " not found in assembled.");
+            return;
+        }
+
+        if (assembledCurrentBolt == null)
+        {
+            Debug.LogError("Assembled detail with name " + bolt.name + " not found in assembled.");
+            return;
+        }
+        
+
+        Vector3 positionOffset = assembledCurrentBolt.position - assembledPreviousDetail.position;
+        Quaternion rotationOffset = assembledCurrentBolt.rotation * Quaternion.Inverse(assembledPreviousDetail.rotation);
+
+        bolt.position = previousDetail.position + positionOffset;
+        bolt.rotation = rotationOffset * previousDetail.rotation;
+
+        XRGrabInteractable grabInteractable = bolt.GetComponent<XRGrabInteractable>();
+        if (grabInteractable != null)
+        {
+            grabInteractable.enabled = false;
+        }
+
+        Rigidbody rb = bolt.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.useGravity = false;
+            rb.isKinematic = true;
+        }
+
+        bolt.SetParent(previousDetail);
+
+        if (localPositiononSnapError != Vector3.zero)
+        {
+            bolt.localPosition = bolt.localPosition + localPositiononSnapError;
+        }
+
+
+
+      
+        if (bolt.TryGetComponent(out HighlightPlus.HighlightEffect highlightEffect))
+        {
+            highlightEffect.SetHighlighted(false);
+        }
+
+        if (disableColliderOnSnap)
+        {
+            DisableBoltColliders(bolt);
+        }
+
+        boltSnapStatus[bolt] = true;
+        boltsSnapped++;
+        Debug.Log($"Bolt {bolt.name} snapped into place. Total snapped: {boltsSnapped}");
+    }
+
+    private void HighlightCurrentBolt()
+    {
+        if (!enforceOrder) return;
+
+       
+        foreach (var bolt in bolts)
+        {
+            if (bolt.TryGetComponent(out HighlightPlus.HighlightEffect highlightEffect))
             {
-                rb.useGravity = false;
-                rb.isKinematic = true;
+                highlightEffect.SetHighlighted(false);
             }
+        }
 
-            // Устанавливаем previousDetail родителем болта
-            bolt.SetParent(previousDetail);
+      
+        if (boltsSnapped < bolts.Count)
+        {
+            Transform currentBolt = bolts[boltsSnapped];
+            if (currentBolt.TryGetComponent(out HighlightPlus.HighlightEffect currentHighlight))
+            {
+                currentHighlight.SetHighlighted(true);
+            }
+        }
+    }
 
-            boltSnapStatus[bolt] = true;
-            boltsSnapped++;
-            Debug.Log($"Bolt {bolt.name} snapped into place. Total snapped: {boltsSnapped}");
+    private void DisableBoltColliders(Transform bolt)
+    {
+        Collider col = bolt.GetComponent<Collider>();
+        if (col != null)
+        {
+            col.enabled = false;
+            Debug.Log($"Collider of bolt {bolt.name} has been disabled.");
+        }
+    }
+
+    private void DisablePreviousDetailGrab()
+    {
+        XRGrabInteractable grabInteractable = previousDetail.GetComponent<XRGrabInteractable>();
+        if (grabInteractable != null)
+        {
+            grabInteractable.enabled = false;
+            Debug.Log("Grabbing of previous detail has been disabled.");
+        }
+    }
+}
+
+public class BoltTrigger : MonoBehaviour
+{
+    private BoltsManager boltsManager;
+    private Transform bolt;
+
+    public void Initialize(BoltsManager manager, Transform boltTransform)
+    {
+        boltsManager = manager;
+        bolt = boltTransform;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.transform == boltsManager.previousDetail)
+        {
+            boltsManager.OnBoltTriggered(bolt);
+            Debug.Log("Collision happened");
         }
     }
 }

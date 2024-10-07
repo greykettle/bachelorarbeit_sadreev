@@ -5,12 +5,25 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/StartMenuScene.unity
-    guid: 8fad33f2da30e654fa0e0fcc625ea139
   - enabled: 1
-    path: Assets/Scenes/MainScene.unity
+    path: Assets/Scenes/Menu.unity
+    guid: c8ac955c3756dee4781936680018dda0
+  - enabled: 1
+    path: Assets/Scenes/Montage2St.unity
     guid: 278423d59d5d3e04e8ec5444836d4e06
+  - enabled: 1
+    path: Assets/Scenes/Tutorial.unity
+    guid: beab9726c2b9f074bb621ee695211253
+  - enabled: 1
+    path: Assets/Scenes/Montage1St.unity
+    guid: 4df61209cadc71044a079790b5434676
+  - enabled: 1
+    path: Assets/Scenes/Demontage1St.unity
+    guid: ff081811f21162b48bf2b6bb352017c6
+  - enabled: 1
+    path: Assets/Scenes/Demontage2St.unity
+    guid: 2e0b58a57c5a53c409f703090ed4b57d
   m_configObjects:
+    com.htc.upm.wave.xrsdk.xrsettings: {fileID: 11400000, guid: acd7a546925697f448a2f428d70154a9, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: e7e26b6707b8262489c9efd2ac3e0dca, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 3c42fcd7fe589f543b509c03e6f88d06, type: 2}

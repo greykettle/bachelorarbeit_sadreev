@@ -4,11 +4,12 @@ using UnityEngine;
 public class WrenchBoltManager : MonoBehaviour
 {
     public List<GameObject> details;
-    private HashSet<GameObject> snappedDetails = new HashSet<GameObject>();  // Хранит закрученные детали
+    private HashSet<GameObject> snappedDetails = new HashSet<GameObject>(); 
     private GearboxAssembly gearboxAssembly;
 
     void Start()
     {
+        if (!enabled) return; 
 
         gearboxAssembly = FindObjectOfType<GearboxAssembly>();
         foreach (GameObject detail in details)
@@ -16,13 +17,18 @@ public class WrenchBoltManager : MonoBehaviour
             WrenchBolts trigger = detail.GetComponent<WrenchBolts>();
             if (trigger != null)
             {
-                trigger.manager = this;  // Устанавливаем ссылку на менеджер для каждой детали
+                trigger.manager = this;  
             }
             else
             {
-                Debug.LogError("Деталь " + detail.name + " не имеет скрипта DetailTrigger.");
+                Debug.LogError("Деталь " + detail.name + " не имеет скрипта WrenchBolts.");
             }
         }
+    }
+
+    void OnEnable()
+    {
+        Start(); 
     }
 
     public void DetailSnapped(GameObject detail)
@@ -32,13 +38,12 @@ public class WrenchBoltManager : MonoBehaviour
             snappedDetails.Add(detail);
         }
 
-        // Проверяем, все ли детали были закручены
         if (snappedDetails.Count == details.Count)
         {
-            Debug.Log("Все детали закручены. Переход на следующий уровень.");
+            Debug.Log("Next level.");
             if (gearboxAssembly != null)
             {
-                gearboxAssembly.OnDetailSnapped();  // Здесь вызывается переход на следующий уровень
+                gearboxAssembly.OnDetailSnapped();  
             }
         }
     }

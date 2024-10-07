@@ -7,7 +7,9 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class MatchRelativeTransforms : MonoBehaviour
 {
     public Transform previousDetail;
-    public Transform testParent; 
+    public Transform testParent;
+    public bool enablePreviousDetailGrab;
+    public Vector3 localPositiononSnapError;
 
     public float snapDistance = 0.1f;
     private bool isSnapped = false;
@@ -17,6 +19,10 @@ public class MatchRelativeTransforms : MonoBehaviour
     private Transform currentDetail;
     private Transform assembledParent;
     private GearboxAssembly gearboxAssembly;
+
+
+
+
 
     public GearboxAssembly GearboxAssembly
     {
@@ -34,7 +40,7 @@ public class MatchRelativeTransforms : MonoBehaviour
         gearboxAssembly = FindObjectOfType<GearboxAssembly>();
         if (gearboxAssembly == null)
         {
-            Debug.LogError("GearboxAssembly не найден в сцене. Убедитесь, что он присутствует и активен.");
+            Debug.LogError("GearboxAssembly not found.");
         }
 
 
@@ -49,13 +55,14 @@ public class MatchRelativeTransforms : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Assembled объект не найден в сцене. Убедитесь, что он присутствует и активен.");
+            Debug.LogError("Assembled not found.");
             return; 
         }
         if (!isSnapped && currentDetail != null && previousDetail != null)
         {
             Transform assembledPreviousDetail = assembledParent.Find(previousDetail.name);
             Transform assembledCurrentDetail = assembledParent.Find(currentDetail.name);
+
 
             if (assembledPreviousDetail == null)
             {
@@ -76,7 +83,9 @@ public class MatchRelativeTransforms : MonoBehaviour
                 Vector3 positionOffset = assembledCurrentDetail.position - assembledPreviousDetail.position;
                 Quaternion rotationOffset = assembledCurrentDetail.rotation * Quaternion.Inverse(assembledPreviousDetail.rotation);
 
-                currentDetail.position = previousDetail.position + positionOffset;
+                // currentDetail.position = previousDetail.position + positionOffset;
+                currentDetail.position = previousDetail.position;
+                Debug.Log($"Previous Detail Position {previousDetail.position}");
                 currentDetail.rotation = rotationOffset * previousDetail.rotation;
                 currentDetail.GetComponent<XRGrabInteractable>().enabled = false;
 
@@ -88,6 +97,10 @@ public class MatchRelativeTransforms : MonoBehaviour
 
                 isSnapped = true;
                 currentDetail.parent = testParent;
+                if (localPositiononSnapError != Vector3.zero)
+                {
+                    currentDetail.localPosition = localPositiononSnapError;
+                }
 
                 DisableAllColliders();
 

@@ -1,20 +1,62 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WrenchBolts : MonoBehaviour
 {
-    public WrenchBoltManager manager;  // Ссылка на менеджер
-    public GameObject Tool;    // Определенный инструмент, который должен взаимодействовать с деталью
+    public float wrenchTime;
+    public float runningTime;
+    public Image circleTimer;
+    public WrenchBoltManager manager;  
+    public GameObject instrument;    
     private bool isSnapped = false;
+
+    private void Start()
+    {
+        GetComponent<Rigidbody>().sleepThreshold = 0;
+    }
+
 
     private void OnTriggerEnter(Collider other)
     {
-        // Проверяем, если деталь еще не закручена и объект, с которым произошло столкновение, является нужным инструментом
-        if (!isSnapped && other.gameObject == Tool)
+        if (!isSnapped && other.gameObject == instrument)
         {
-            isSnapped = true;
-            manager.DetailSnapped(this.gameObject);
-            Debug.Log(gameObject.name + Tool.name);
-            this.gameObject.GetComponent<MeshCollider>().enabled = false;
+            circleTimer.gameObject.SetActive(true);
         }
+    }
+
+
+    private void OnTriggerStay(Collider other)
+    {
+        // Проверяем, что инструмент активировал триггер
+        if (other.gameObject == instrument)
+        {
+            runningTime += Time.deltaTime;
+            circleTimer.fillAmount = runningTime / wrenchTime;
+            if (runningTime >= wrenchTime)
+            {
+                Debug.Log("We collided");
+                isSnapped = true;
+                manager.DetailSnapped(this.gameObject);
+                Debug.Log(gameObject.name + instrument.name);
+                this.gameObject.GetComponent<MeshCollider>().enabled = false;
+
+                ResetCircle();
+            }
+
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject == instrument)
+        {
+            ResetCircle();
+            runningTime = 0;
+        }
+    }
+
+    private void ResetCircle()
+    {
+        circleTimer.fillAmount = 0;
+        circleTimer.gameObject.SetActive(false);
     }
 }

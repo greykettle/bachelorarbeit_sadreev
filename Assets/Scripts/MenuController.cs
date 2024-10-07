@@ -11,22 +11,19 @@ public class MenuController : MonoBehaviour
 
     public GameObject mainMenuPanel;
     public GameObject manualSelectionPanel;
-    public GameObject manual;
     public Button oneStageButton;
     public Button twoStageButton;
 
     void Start()
     {
-        startManualButton.onClick.AddListener(OnStartManualClicked);
-        startTutorialButton.onClick.AddListener(OnStartTutorialClicked);
+        //startManualButton.onClick.AddListener(OnStartManualClicked);
+       // startTutorialButton.onClick.AddListener(OnStartTutorialClicked);
         exitButton.onClick.AddListener(OnExitClicked);
         languageToggle.onValueChanged.AddListener(OnLanguageToggleChanged);
 
-        oneStageButton.onClick.AddListener(OnOneStageClicked);
-        twoStageButton.onClick.AddListener(OnTwoStageClicked);
 
         manualSelectionPanel.SetActive(false);
-        manual.SetActive(false);
+
     }
 
     void OnStartManualClicked()
@@ -54,17 +51,4 @@ public class MenuController : MonoBehaviour
         Debug.Log("Change Language: " + (isOn ? "German" : "English"));
     }
 
-    void OnOneStageClicked()
-    {
-        Debug.Log("One Stage Manual");
-        manualSelectionPanel.SetActive(false);
-        manual.SetActive(true);
-    }
-
-    void OnTwoStageClicked()
-    {
-        Debug.Log("Two Stage Manual");
-        manualSelectionPanel.SetActive(false);
-        manual.SetActive(true);
-    }
 }

@@ -7,6 +7,7 @@ public class LanguageToggleController : MonoBehaviour
     public Image toggleBackground;
     public Sprite germanFlag;
     public Sprite britishFlag;
+    public Localizator localizator;
 
     void Start()
     {
@@ -21,6 +22,16 @@ public class LanguageToggleController : MonoBehaviour
 
     void UpdateToggleImage(bool isOn)
     {
-        toggleBackground.sprite = isOn ? germanFlag : britishFlag;
+        if (isOn)
+        {
+            toggleBackground.sprite = germanFlag;
+            localizator.ChangeLanguage("ger");
+        }
+        else
+        {
+            toggleBackground.sprite = britishFlag;
+            localizator.ChangeLanguage("eng");
+
+        }
     }
 }
