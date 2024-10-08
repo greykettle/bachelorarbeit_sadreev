@@ -19,7 +19,7 @@ public class SnapToPositionAndRotation : MonoBehaviour
         gearboxAssembly = FindObjectOfType<GearboxAssembly>();
         if (gearboxAssembly == null)
         {
-            Debug.LogError("GearboxAssembly не найден в сцене!");
+            Debug.LogError("GearboxAssembly not found!");
         }
     }
 
@@ -32,7 +32,7 @@ public class SnapToPositionAndRotation : MonoBehaviour
 
             if (gearboxAssembly != null)
             {
-                Debug.Log("Вызов OnDetailSnapped() в GearboxAssembly");
+                Debug.Log("onDetSnap()");
                 gearboxAssembly.OnDetailSnapped();
             }
             else
@@ -76,7 +76,8 @@ public class SnapToPositionAndRotation : MonoBehaviour
         {
             col.enabled = false;
         }
-
-        Debug.Log("Object snapped to the fixed local position and rotation!");
+        if (targetPointB.tag == "SnapPoint")
+        { targetPointB.GetChild(0).gameObject.SetActive(false); }
+        Debug.Log("Object snapped to the fixed local position and rotation");
     }
 }

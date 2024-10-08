@@ -15,8 +15,7 @@ namespace Assets.Scripts.Demontage
         public bool isStepByStepActivation;
 
         private int indexOfDetailToActivation=0;
-        //Главную деталь считать разобранной после того как мы ее взяли  вруки.
-        //Все поддетали нам нужно разделитьс главной деталью  по изолированным слоям чтобы не было лишних  коллизий
+
         public void Launch()
         {
             if (isStepByStepActivation)

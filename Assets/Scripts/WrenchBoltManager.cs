@@ -21,7 +21,7 @@ public class WrenchBoltManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Деталь " + detail.name + " не имеет скрипта WrenchBolts.");
+                Debug.LogError("no Wrenchbolts script");
             }
         }
     }

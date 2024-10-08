@@ -9,11 +9,10 @@ public class XRControllerButtonHandler : MonoBehaviour
 
     void Update()
     {
-        // Проверяем состояние кнопки "A" на контроллере
-        // (controller.inputDevice.TryGetFeatureValue(CommonUsages.primaryButton, out bool isPressed) && isPressed)
+   
         {
             Debug.Log("Button A pressed!");
-            // Ваш код при нажатии кнопки "A"
+           
         }
     }
 }

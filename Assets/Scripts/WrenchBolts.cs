@@ -20,6 +20,7 @@ public class WrenchBolts : MonoBehaviour
     {
         if (!isSnapped && other.gameObject == instrument)
         {
+            Debug.Log($"Instrument {instrument.name} entered in bolt {gameObject.name}");
             circleTimer.gameObject.SetActive(true);
         }
     }
@@ -27,7 +28,7 @@ public class WrenchBolts : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        // Проверяем, что инструмент активировал триггер
+
         if (other.gameObject == instrument)
         {
             runningTime += Time.deltaTime;

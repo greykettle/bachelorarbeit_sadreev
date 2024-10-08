@@ -21,7 +21,9 @@ public class TargetPoint : MonoBehaviour
             other.gameObject.GetComponent<Rigidbody>().isKinematic = true;
             other.transform.localPosition = endLocalPos;
             other.transform.localEulerAngles = endLocalRot;
+            gameObject.SetActive(false);
         }
     }
 
 }
+

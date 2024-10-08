@@ -13,7 +13,7 @@ public class InitEventCollector : MonoBehaviour
 
     void Start()
     {
-        // Подписываемся на события кнопок
+        
         languageButton.onClick.AddListener(OnLanguageButtonClicked);
         difficultyButton.onClick.AddListener(OnDifficultyButtonClicked);
         startGameButton.onClick.AddListener(OnStartGameButtonClicked);
@@ -21,32 +21,32 @@ public class InitEventCollector : MonoBehaviour
 
     void OnLanguageButtonClicked()
     {
-        // Здесь можно реализовать логику выбора языка
-        selectedLanguage = "Selected Language"; // замените это на логику выбора языка
+       
+        selectedLanguage = "Selected Language"; 
         Debug.Log("Language selected: " + selectedLanguage);
     }
 
     void OnDifficultyButtonClicked()
     {
-        // Здесь можно реализовать логику выбора сложности
-        selectedDifficulty = "Selected Difficulty"; // замените это на логику выбора сложности
+        
+        selectedDifficulty = "Selected Difficulty"; 
         Debug.Log("Difficulty selected: " + selectedDifficulty);
     }
 
     void OnStartGameButtonClicked()
     {
-        // Здесь можно сохранить настройки и начать игру
+        
         PlayerPrefs.SetString("Language", selectedLanguage);
         PlayerPrefs.SetString("Difficulty", selectedDifficulty);
         PlayerPrefs.Save();
 
-        // Загрузить основную сцену игры
-        SceneManager.LoadScene("MainGameScene"); // замените "MainGameScene" на имя вашей основной сцены
+    
+        SceneManager.LoadScene("MainGameScene"); 
     }
 
     private void OnDestroy()
     {
-        // Отписываемся от событий кнопок, чтобы избежать утечек памяти
+       
         languageButton.onClick.RemoveListener(OnLanguageButtonClicked);
         difficultyButton.onClick.RemoveListener(OnDifficultyButtonClicked);
         startGameButton.onClick.RemoveListener(OnStartGameButtonClicked);

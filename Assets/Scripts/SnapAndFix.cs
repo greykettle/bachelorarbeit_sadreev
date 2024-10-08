@@ -19,8 +19,8 @@ public class SnapAndFix : MonoBehaviour
     public Transform snapPoint2B;
     public float snapDistance = 0.05f;
 
-    public float customEulerRotationX = -90.0f; // Customizable Euler rotation X
-    public float customYPosition = 0.81f; // Customizable Y position
+    public float customEulerRotationX = -90.0f; 
+    public float customYPosition = 0.81f; 
 
     private MeshCollider detailMeshCollider;
     private Rigidbody detailRigidbody;
@@ -34,7 +34,7 @@ public class SnapAndFix : MonoBehaviour
         gearboxAssembly = FindObjectOfType<GearboxAssembly>();
         if (gearboxAssembly == null)
         {
-            Debug.LogError("GearboxAssembly не найден в сцене. Убедитесь, что он присутствует и активен.");
+            Debug.LogError("GearboxAssembly error");
         }
     }
 
@@ -90,6 +90,6 @@ public class SnapAndFix : MonoBehaviour
             detailMeshCollider.enabled = false;
         }
 
-        Debug.Log("Деталь зафиксирована и выровнена по двум точкам!");
+        Debug.Log("detail fixed");
     }
 }

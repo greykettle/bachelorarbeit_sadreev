@@ -41,18 +41,17 @@ public class AssemblyManager : MonoBehaviour
 
     public void assemblingModel()
     {
-        //nextStepObject.transform.SetParent(this.gameObject.transform, false);
+
         Transform etalonPart = etalonModel.transform.Find(nextStepObject.name);
         if (etalonPart != null)
         {
             Debug.Log("assembly");
             nextStepObject.transform.SetParent(etalonPart.parent, true);
 
-            // Установить локальную позицию и локальное вращение текущей детали
             nextStepObject.transform.localPosition = etalonPart.localPosition;
             nextStepObject.transform.localRotation = etalonPart.localRotation;
 
-            // Теперь снова переносим деталь в основной контейнер (MainModel), если это нужно
+
             nextStepObject.transform.SetParent(this.gameObject.transform, true);
      
         }

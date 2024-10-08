@@ -1,34 +1,37 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class TutorialManager : MonoBehaviour
 {
     private int currentStep;
     [SerializeField] private TMP_Text tutorialText;
-    public List<string> instructions;
+    public List<Instruction> instructions; 
     [SerializeField] private Button tutorialButton;
     [SerializeField] private GameObject firstCircle;
     [SerializeField] private GameObject secondCircle;
     [SerializeField] private GameObject objectOnTable;
     [SerializeField] private GameObject targetPoint;
+    [SerializeField] private Localizator localizator; 
+    [SerializeField] private GameObject backToTheMenuCanvas; 
+
     void Start()
     {
         ShowCurrentInstruction();
         tutorialButton.onClick.AddListener(OnButtonClick);
+        backToTheMenuCanvas.SetActive(false); 
     }
 
     void ShowCurrentInstruction()
     {
         if (currentStep < instructions.Count)
         {
-            tutorialText.text = instructions[currentStep];
+            string language = localizator.currentLanguage;
+            tutorialText.text = instructions[currentStep].GetText(language);
         }
     }
+
     public void CompleteObjective()
     {
         currentStep++;
@@ -39,9 +42,12 @@ public class TutorialManager : MonoBehaviour
         }
         else
         {
-            tutorialText.text = "Тutorial wurde abgeschlossen.";
+
+            backToTheMenuCanvas.SetActive(true);
+            tutorialText.text = string.Empty; 
         }
     }
+
     void ExecuteStepLogic()
     {
         switch (currentStep)
@@ -68,9 +74,6 @@ public class TutorialManager : MonoBehaviour
                 targetPoint.SetActive(true);
                 break;
 
-            default:
-                tutorialText.text = "Unknown step!";
-                break;
         }
     }
 
@@ -81,6 +84,7 @@ public class TutorialManager : MonoBehaviour
             CompleteObjective();
         }
     }
+
     public void OnFirstCircleEntered()
     {
         if (currentStep == 1)
@@ -90,6 +94,7 @@ public class TutorialManager : MonoBehaviour
             CompleteObjective();
         }
     }
+
     public void OnSecondCircleEntered()
     {
         if (currentStep == 2)
@@ -97,11 +102,12 @@ public class TutorialManager : MonoBehaviour
             CompleteObjective();
         }
     }
+
     public void OnObjectMovedToTarget()
     {
         if (currentStep == 3)
         {
-            CompleteObjective(); 
+            CompleteObjective();
         }
     }
 }

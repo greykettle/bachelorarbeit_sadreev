@@ -16,8 +16,7 @@ public class MenuController : MonoBehaviour
 
     void Start()
     {
-        //startManualButton.onClick.AddListener(OnStartManualClicked);
-       // startTutorialButton.onClick.AddListener(OnStartTutorialClicked);
+    
         exitButton.onClick.AddListener(OnExitClicked);
         languageToggle.onValueChanged.AddListener(OnLanguageToggleChanged);
 

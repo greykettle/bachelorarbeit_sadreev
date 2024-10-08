@@ -1,10 +1,13 @@
 using HighlightPlus;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
+
 public class GearboxAssembly : MonoBehaviour
 {
+    public List<MontageStep> stepEvents;
     public List<Transform> assemblySteps;
     public UIController uiController;
     private int currentStep = 0;
@@ -60,6 +63,8 @@ public class GearboxAssembly : MonoBehaviour
         Transform currentDetail = assemblySteps[currentStep];
         uiController.UpdateInstructionText(currentStep, false);
         speechController.PlaySpeech(currentStep);
+
+        stepEvents.FirstOrDefault((x) => x.stepIndex == currentStep)?.onStepLaunch?.Invoke();
     }
 
     void AssemblyComplete()

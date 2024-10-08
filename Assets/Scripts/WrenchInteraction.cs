@@ -4,14 +4,14 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class WrenchInteraction : MonoBehaviour
 {
-    public Transform previousDetail; // Предыдущая деталь, к которой фиксируется текущая
-    public Transform testParent; // Родительский объект для зафиксированной детали
-    public float snapDistance = 0.1f; // Допустимое расстояние для фиксации
-    public float customYPosition = 0.0f; // Заданная координата Y
-    public GameObject targetObject; // Целевой объект для триггера
-    public float rotationDuration = 1.0f; // Время для анимации перемещения и вращения
+    public Transform previousDetail; 
+    public Transform testParent;
+    public float snapDistance = 0.1f; 
+    public float customYPosition = 0.0f; 
+    public GameObject targetObject; 
+    public float rotationDuration = 1.0f; 
 
-    private bool isSnapped = false; // Флаг для отслеживания состояния фиксации
+    private bool isSnapped = false;
     private Rigidbody currentDetailRigidbody;
     private MeshCollider currentDetailMeshCollider;
 
@@ -35,7 +35,7 @@ public class WrenchInteraction : MonoBehaviour
         gearboxAssembly = FindObjectOfType<GearboxAssembly>();
         if (gearboxAssembly == null)
         {
-            Debug.LogError("GearboxAssembly не найден в сцене. Убедитесь, что он присутствует и активен.");
+            Debug.LogError("GearboxAssembly not found");
         }
     }
 
@@ -59,27 +59,21 @@ public class WrenchInteraction : MonoBehaviour
 
         if (assembledPreviousDetail == null || assembledCurrentDetail == null)
         {
-            Debug.LogError("Не удалось найти соответствующую деталь в assembled.");
+            Debug.LogError("could not find in assembled.");
             return;
         }
 
-        // Вычисляем смещение позиции относительно предыдущей детали
         Vector3 positionOffset = assembledCurrentDetail.position - assembledPreviousDetail.position;
 
-        // Задаем конкретную координату Y
         positionOffset.y = customYPosition;
 
-        // Вычисляем смещение вращения
         Quaternion rotationOffset = assembledCurrentDetail.rotation * Quaternion.Inverse(assembledPreviousDetail.rotation);
 
-        // Фиксируем текущую деталь в новой позиции и с новым вращением
         currentDetail.position = previousDetail.position + positionOffset;
         currentDetail.rotation = rotationOffset * previousDetail.rotation;
 
-        // Отключаем возможность дальнейшего взаимодействия с деталью
         currentDetail.GetComponent<XRGrabInteractable>().enabled = false;
 
-        // Отключаем физику, чтобы деталь не двигалась
         if (currentDetailRigidbody != null)
         {
             currentDetailRigidbody.useGravity = false;
@@ -110,18 +104,17 @@ public class WrenchInteraction : MonoBehaviour
             yield break;
         }
 
-        // Вычисляем целевую позицию и вращение
         Vector3 targetPosition = previousDetail.position + (assembledCurrentDetail.position - assembledPreviousDetail.position);
         Quaternion targetRotation = assembledCurrentDetail.rotation * Quaternion.Inverse(assembledPreviousDetail.rotation) * previousDetail.rotation;
 
-        // Начальные значения для анимации
+
         Vector3 startPosition = currentDetail.position;
         Quaternion startRotation = currentDetail.rotation;
         float elapsedTime = 0f;
 
         while (elapsedTime < rotationDuration)
         {
-            // Линейная интерполяция позиции и вращения
+
             currentDetail.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / rotationDuration);
             currentDetail.rotation = Quaternion.Lerp(startRotation, targetRotation, elapsedTime / rotationDuration);
 
@@ -129,11 +122,11 @@ public class WrenchInteraction : MonoBehaviour
             yield return null;
         }
 
-        // Убедимся, что деталь точно встала на место
+
         currentDetail.position = targetPosition;
         currentDetail.rotation = targetRotation;
 
-        // Отключаем физику и взаимодействие после завершения
+
         if (currentDetailRigidbody != null)
         {
             currentDetailRigidbody.useGravity = false;
@@ -143,7 +136,7 @@ public class WrenchInteraction : MonoBehaviour
         currentDetailMeshCollider.enabled = false;
         isSnapped = true;
 
-        // Сообщаем о завершении сборки текущей детали
+
         if (gearboxAssembly != null)
         {
             gearboxAssembly.OnDetailSnapped();

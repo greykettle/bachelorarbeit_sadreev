@@ -27,7 +27,7 @@ public class WrenchDetail : MonoBehaviour
 
     void Update()
     {
-        // Проверка активации коллайдера в зависимости от шага сборки
+
         if (gearboxAssembly != null && currentLevel == gearboxAssembly.CurrentStep && !currentDetailMeshCollider.enabled)
         {
             currentDetailMeshCollider.enabled = true;
@@ -45,7 +45,7 @@ public class WrenchDetail : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        // Проверяем, что инструмент активировал триггер
+ 
         if (other.gameObject == instrument)
         {
             runningTime += Time.deltaTime;

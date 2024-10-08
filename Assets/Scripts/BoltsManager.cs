@@ -47,7 +47,7 @@ public class BoltsManager : MonoBehaviour
             }
         }
 
-        // Подсветка первого болта, если enforceOrder включен
+
         HighlightCurrentBolt();
     }
 
@@ -86,7 +86,7 @@ public class BoltsManager : MonoBehaviour
         }
         else
         {
-            // Обновляем подсветку текущего болта
+
             HighlightCurrentBolt();
         }
     }
@@ -140,7 +140,7 @@ public class BoltsManager : MonoBehaviour
         }
         else
         {
-            // Обновляем подсветку текущего болта после вставки
+     
             HighlightCurrentBolt();
         }
     }

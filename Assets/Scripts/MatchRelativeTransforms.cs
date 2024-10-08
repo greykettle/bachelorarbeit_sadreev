@@ -83,7 +83,7 @@ public class MatchRelativeTransforms : MonoBehaviour
                 Vector3 positionOffset = assembledCurrentDetail.position - assembledPreviousDetail.position;
                 Quaternion rotationOffset = assembledCurrentDetail.rotation * Quaternion.Inverse(assembledPreviousDetail.rotation);
 
-                // currentDetail.position = previousDetail.position + positionOffset;
+       
                 currentDetail.position = previousDetail.position;
                 Debug.Log($"Previous Detail Position {previousDetail.position}");
                 currentDetail.rotation = rotationOffset * previousDetail.rotation;
